@@ -1,0 +1,37 @@
+import httpx
+import uvicorn
+from fastmcp import FastMCP
+
+# 1. Define the URL for the OpenAPI specification
+openapi_spec_url = "https://data.economie.gouv.fr/api/explore/v2.1/swagger.json"
+
+# 2. Fetch the OpenAPI spec
+try:
+    response = httpx.get(openapi_spec_url)
+    response.raise_for_status()  # Raise an exception for bad status codes
+    spec = response.json()
+except httpx.RequestError as e:
+    print(f"Error fetching OpenAPI spec: {e}")
+    exit(1)
+except Exception as e:
+    print(f"An error occurred: {e}")
+    exit(1)
+
+
+# 3. Create an HTTP client for the API
+# The base URL is extracted from the spec's 'servers' list
+base_url = spec.get("servers", [{}])[0].get("url", "https/data.economie.gouv.fr")
+
+api_client = httpx.AsyncClient(
+    base_url=base_url,
+    timeout=30.0,  # Set a reasonable timeout
+)
+
+# 4. Create the FastMCP server from the OpenAPI spec
+print("Creating MCP server from OpenAPI spec...")
+mcp = FastMCP.from_openapi(openapi_spec=spec, client=api_client)
+
+# 5. Make the server runnable
+if __name__ == "__main__":
+    # This allows you to run 'python server.py' to test it
+    uvicorn.run(mcp, host="127.0.0.1", port=8000)
