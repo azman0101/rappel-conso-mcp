@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "Serveur RappelConso": {
+    "OpenAPI FastMCP": {
       "command": "uv",
       "args": [
         "run",
@@ -8,7 +8,7 @@
         "fastmcp",
         "fastmcp",
         "run",
-        "/workspaces/rappel-conso-mcp/server-rappel.py"
+        "/workspaces/rappel-conso-mcp/server.py"
       ]
     }
   }

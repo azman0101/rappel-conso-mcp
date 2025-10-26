@@ -7,7 +7,9 @@ import os
 os.environ["FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER"] = "true"
 
 # 1. Define the URL for the OpenAPI specification
-openapi_spec_url = "https://data.economie.gouv.fr/api/explore/v2.1/swagger.json"
+# openapi_spec_url = "https://data.economie.gouv.fr/api/explore/v2.1/swagger.json"
+
+openapi_spec_url = "https://tabular-api.data.gouv.fr/api/resources/5a4e7174-657c-4920-af1f-3440a996837c/swagger/"
 
 # 2. Fetch the OpenAPI spec
 try:
