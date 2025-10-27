@@ -1,7 +1,7 @@
 import httpx
 import uvicorn
 from fastmcp import FastMCP
-from typing import Optional
+from typing import Optional, Any, cast
 
 # 1. Initialiser un serveur MCP simple
 # (Nous n'utilisons plus from_openapi)
@@ -42,13 +42,13 @@ async def get_rappels_conso(
         # Utiliser httpx pour faire l'appel API asynchrone
         async with httpx.AsyncClient() as client:
             response = await client.get(BASE_API_URL, params=cleaned_params)
-            
+
             # Lève une erreur si le statut de la réponse est 4xx ou 5xx
             response.raise_for_status()
-            
+
             # Retourner les données JSON
             return response.json()
-            
+
     except httpx.RequestError as e:
         print(f"Erreur lors de l'appel API: {e}")
         return {"error": f"Erreur lors de l'appel à l'API: {e}"}
@@ -60,5 +60,5 @@ async def get_rappels_conso(
 # 4. Rendre le serveur exécutable (pour les tests)
 if __name__ == "__main__":
     print("Serveur RappelConso démarré pour test sur http://127.0.0.1:8000")
-    uvicorn.run(mcp, host="127.0.0.1", port=8000)
-
+    # Cast to Any to satisfy static type checkers (FastMCP is used as an ASGI app at runtime)
+    mcp.run()
