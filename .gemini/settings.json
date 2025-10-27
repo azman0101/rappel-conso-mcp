@@ -8,7 +8,7 @@
         "fastmcp",
         "fastmcp",
         "run",
-        "/private/tmp/rappel-conso-mcp/server-rappel.py"
+        "./server-rappel.py"
       ]
     }
   }
