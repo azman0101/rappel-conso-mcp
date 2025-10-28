@@ -57,6 +57,14 @@ async def get_rappels_conso(
         return {"error": f"Erreur inattendue: {e}"}
 
 
+@mcp.prompt
+def chercher_rappel_produit(nom_produit: str) -> str:
+    """
+    Génère un message pour rechercher un rappel de produit par son nom.
+    """
+    return f"Y a-t-il eu des rappels pour le produit '{nom_produit}'?"
+
+
 # 4. Rendre le serveur exécutable (pour les tests)
 if __name__ == "__main__":
     print("Serveur RappelConso démarré pour test sur http://127.0.0.1:8000")
