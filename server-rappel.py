@@ -276,6 +276,14 @@ async def get_latest_from_category(category: str, limit: int = 10) -> dict:
     return {"total_count": len(results), "results": [r.dict() for r in results]}
 
 
+@mcp.prompt
+def chercher_rappel_produit(nom_produit: str) -> str:
+    """
+    Génère un message pour rechercher un rappel de produit par son nom.
+    """
+    return f"Y a-t-il eu des rappels pour le produit libellé '{nom_produit}'?"
+
+
 # 4. Rendre le serveur exécutable (pour les tests)
 if __name__ == "__main__":
     logging.error("Serveur RappelConso démarré pour test sur http://127.0.0.1:8000")
