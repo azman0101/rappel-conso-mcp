@@ -281,7 +281,7 @@ def chercher_rappel_produit(nom_produit: str) -> str:
     """
     Génère un message pour rechercher un rappel de produit par son nom.
     """
-    return f"Y a-t-il eu des rappels pour le produit '{nom_produit}'?"
+    return f"Y a-t-il eu des rappels pour le produit libellé '{nom_produit}'?"
 
 
 # 4. Rendre le serveur exécutable (pour les tests)
