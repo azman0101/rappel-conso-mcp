@@ -1,8 +1,10 @@
 import httpx
 import uvicorn
 import re
-from fastmcp import FastMCP
-from typing import Optional, Any, Dict, List
+from fastmcp import FastMCP, Context
+from fastmcp.exceptions import ToolError
+from typing import Optional, Any, Dict, List, Literal
+from pydantic import Field
 from models import Model, ResultEntry
 import logging
 import sys
@@ -20,23 +22,46 @@ mcp = FastMCP(name="RappelConso")
 BASE_API_URL = "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/rappelconso-v2-gtin-espaces/records"
 
 
+def validate_where(expr: str) -> bool:
+    # Basic validation to prevent misuse. This is not a comprehensive validation.
+    if isinstance(expr, str) and any(keyword in expr.upper() for keyword in ["DROP", "DELETE", "INSERT", "UPDATE"]):
+        return False
+    return True
 # 3. Créer un outil spécifique pour ce dataset
-@mcp.tool
+@mcp.tool(exclude_args=["ctx"], description="Récupère les rappels de produits")
 async def get_rappels_conso(
-    limit: int = 20,
-    order_by: Optional[str] = None,
-    where: Optional[str] = None,
+    limit: int = Field(20, ge=1, le=100),
+    order_by: Optional[Literal["date_publication desc", "date_publication asc", "libelle asc"]] = None,
+    where: Optional[str] = Field(
+        None,
+        description=(
+            "Expression de filtre Opendatasoft. "
+            "Champs valides: libelle, marque, date_publication, categorie, gtin. "
+            "Opérateurs: LIKE, =, >, <."
+        )
+    ),
     filters: Optional[Dict[str, str]] = None,
+    ctx: Context = None
 ) -> dict:
     """
-    Récupère les rappels de produits du dataset 'rappelconso-v2-gtin-trie'.
+    Récupère les rappels de produits.
 
-    Args:
-        limit: Le nombre maximum de rappels à retourner. (Défaut: 20)
-        order_by: Le champ sur lequel trier les résultats (ex: "date_publication desc").
-        where: Une requête de filtre Opendatasoft (ex: "libelle LIKE 'chocolat'").
+    Champs utilisables dans `where`: libelle, marque, date_publication, categorie, gtin
+    Opérateurs supportés: LIKE, =, >, <
+
+    Exemples:
+    - where="libelle LIKE 'chocolat'"
+    - where="categorie = 'Alimentation'"
+    - order_by="date_publication desc"
     """
-    logging.info(f"Appel de l'outil get_rappels_conso avec limit={limit}, order_by={order_by}, where={where}, filters={filters}")
+    if where is not None and not validate_where(where):
+        raise ToolError(
+            f"Invalid where clause: {where}. Champs autorisés: libelle, marque, date_publication, categorie, gtin. "
+            "Exemple: \"libelle LIKE 'chocolat'\""
+        )
+
+    # votre logique...
+    logging.info(f"Appel de l’outil avec limit={limit}, order_by={order_by}, where={where}, filters={filters}")
 
     # Préparer les paramètres de la requête
     params: Dict[str, Any] = {
@@ -75,7 +100,7 @@ async def get_rappels_conso(
         return set(m.group(1) for m in op_pattern.finditer(without_strings))
 
     # Accept raw where string as-is (backwards compatible), but validate referenced fields
-    if where:
+    if where and isinstance(where, str):
         cited = _extract_fields_from_where(where)
         if cited:
             invalid = [f for f in cited if f not in allowed_fields]
