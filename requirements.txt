@@ -1,0 +1,7 @@
+httpx==0.28.1
+fastmcp==2.13.0.1
+uvicorn[standard]==0.38.0
+uv==0.9.5
+# Notes:
+# - These are the direct runtime dependencies referenced in `server-rappel.py`.
+# - Leave versions loose (>=) so pip can resolve compatible transitive dependencies.
