@@ -289,3 +289,5 @@ if __name__ == "__main__":
     logging.error("Serveur RappelConso démarré pour test sur http://127.0.0.1:8000")
     # Cast to Any to satisfy static type checkers (FastMCP is used as an ASGI app at runtime)
     mcp.run()
+
+app = mcp.http_app()
