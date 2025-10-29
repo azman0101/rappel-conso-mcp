@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "RappelConso": {
+    "Serveur RappelConso": {
       "command": "uv",
       "args": [
         "run",
