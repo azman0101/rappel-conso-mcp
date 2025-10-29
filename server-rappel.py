@@ -1,7 +1,9 @@
 import httpx
 import uvicorn
 import re
+import os
 from fastmcp import FastMCP
+from fastmcp.server.auth.providers.github import GitHubProvider
 from typing import Optional, Any, Dict, List
 from models import Model, ResultEntry
 import logging
@@ -10,9 +12,20 @@ import sys
 # Ensure logs go to stderr (not stdout) so they don't interfere with MCP stdio protocol.
 logging.basicConfig(level=logging.INFO, stream=sys.stderr,
                     format='[%(asctime)s] %(levelname)-8s %(message)s')
+
 # 1. Initialiser un serveur MCP simple
-# (Nous n'utilisons plus from_openapi)
-mcp = FastMCP(name="RappelConso")
+# Configuration de l'authentification
+CLIENT_ID = os.environ.get("GITHUB_CLIENT_ID")
+CLIENT_SECRET = os.environ.get("GITHUB_CLIENT_SECRET")
+BASE_URL = os.environ.get("BASE_URL")
+
+if not CLIENT_ID or not CLIENT_SECRET:
+    logging.warning("GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET are not set. The server will run without authentication.")
+    auth = None
+else:
+    auth = GitHubProvider(client_id=CLIENT_ID, client_secret=CLIENT_SECRET, base_url=BASE_URL)
+
+mcp = FastMCP(name="RappelConso", auth=auth)
 
 # 2. Définir l'URL de base de l'API que nous voulons
 # Remarque: le dataset correct observé dans les logs est `rappelconso-v2-gtin-espaces`.

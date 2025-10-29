@@ -28,7 +28,24 @@ pip install -r requirements.txt
 
 ## Running the Server
 
+### Authentication
+
+This server uses GitHub OAuth for authentication. You will need to create a GitHub OAuth application and set the following environment variables:
+
+- `GITHUB_CLIENT_ID`: The client ID of your GitHub OAuth app.
+- `GITHUB_CLIENT_SECRET`: The client secret of your GitHub OAuth app.
+- `BASE_URL`: The public URL of your server (e.g., `https://your-server.com`). This is required for the OAuth callback to work correctly in a deployed environment.
+
+When creating the OAuth app, you must provide the following callback URLs:
+- `http://127.0.0.1:33418`
+- `https://vscode.dev/redirect`
+
+### Starting the server
+
 ```bash
+export GITHUB_CLIENT_ID="your_client_id"
+export GITHUB_CLIENT_SECRET="your_client_secret"
+export BASE_URL="http://localhost:8000" # Or your public URL
 python server-rappel.py
 ```
 
