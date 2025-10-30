@@ -23,9 +23,7 @@ BASE_API_URL = "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/
 
 
 def validate_where(expr: str) -> bool:
-    # Basic validation to prevent misuse. This is not a comprehensive validation.
-    if isinstance(expr, str) and any(keyword in expr.upper() for keyword in ["DROP", "DELETE", "INSERT", "UPDATE"]):
-        return False
+    # Future validation logic to prevent misuse
     return True
 # 3. Créer un outil spécifique pour ce dataset
 @mcp.tool(exclude_args=["ctx"], description="Récupère les rappels de produits")
