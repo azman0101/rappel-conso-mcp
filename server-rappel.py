@@ -22,9 +22,6 @@ mcp = FastMCP(name="RappelConso")
 BASE_API_URL = "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets/rappelconso-v2-gtin-espaces/records"
 
 
-def validate_where(expr: str) -> bool:
-    # Future validation logic to prevent misuse
-    return True
 # 3. Créer un outil spécifique pour ce dataset
 @mcp.tool(exclude_args=["ctx"], description="Récupère les rappels de produits")
 async def get_rappels_conso(
@@ -52,13 +49,6 @@ async def get_rappels_conso(
     - where="categorie = 'Alimentation'"
     - order_by="date_publication desc"
     """
-    if where is not None and not validate_where(where):
-        raise ToolError(
-            f"Invalid where clause: {where}. Champs autorisés: libelle, marque, date_publication, categorie, gtin. "
-            "Exemple: \"libelle LIKE 'chocolat'\""
-        )
-
-    # votre logique...
     logging.info(f"Appel de l’outil avec limit={limit}, order_by={order_by}, where={where}, filters={filters}")
 
     # Préparer les paramètres de la requête
